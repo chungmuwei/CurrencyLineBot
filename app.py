@@ -16,8 +16,8 @@ app = Flask(__name__)
 
 # '0FmaYmoBD+O1kPOtna88s5uehDgVbGBNQaoFHA6L1nBOsunQMYg5vVjPltt57j+/uH305Uys6wcmXTxjAb2QBDQwF0/68WSwIWmUl9TfIT4jKIx+3LIIdn6TbBKAbMoaAlt2OkUkWjG2QuNDQuCBLQdB04t89/1O/w1cDnyilFU='
 # 'ce8c604a308615d0f101c2bbbbab1e5f'
-line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
-handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
+line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
+handler = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 
 # https://a0bf-27-33-126-123.ngrok.io/callback
 
