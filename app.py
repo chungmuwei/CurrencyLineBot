@@ -10,12 +10,16 @@ from linebot.models import (
     QuickReply, QuickReplyButton, MessageAction
 )
 
-import rate, twder
+import os, rate, twder
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi('0FmaYmoBD+O1kPOtna88s5uehDgVbGBNQaoFHA6L1nBOsunQMYg5vVjPltt57j+/uH305Uys6wcmXTxjAb2QBDQwF0/68WSwIWmUl9TfIT4jKIx+3LIIdn6TbBKAbMoaAlt2OkUkWjG2QuNDQuCBLQdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('ce8c604a308615d0f101c2bbbbab1e5f')
+# '0FmaYmoBD+O1kPOtna88s5uehDgVbGBNQaoFHA6L1nBOsunQMYg5vVjPltt57j+/uH305Uys6wcmXTxjAb2QBDQwF0/68WSwIWmUl9TfIT4jKIx+3LIIdn6TbBKAbMoaAlt2OkUkWjG2QuNDQuCBLQdB04t89/1O/w1cDnyilFU='
+# 'ce8c604a308615d0f101c2bbbbab1e5f'
+line_bot_api = LineBotApi(os.environ['CHANNEL_ACCESS_TOKEN'])
+handler = WebhookHandler(os.environ['CHANNEL_SECRET'])
+
+# https://a0bf-27-33-126-123.ngrok.io/callback
 
 def load_subscribers():
     f = open("data/userId.txt", "r")
@@ -34,6 +38,8 @@ INFO_MESSEGE = TextSendMessage(text=f"""目前支援的指令如下：
                 QuickReplyButton(action=MessageAction(label="JPY", text="JPY"))
             ]))
 
+INVALID_MESSEGE = TextSendMessage(text="很抱歉，我無法辨識您的指令！")
+
 def list_all_currencies():
     content = "目前支援的貨幣如下：\n"
     content += "\n".join(twder.currency_name_dict().values())
@@ -42,10 +48,6 @@ def list_all_currencies():
                 QuickReplyButton(action=MessageAction(label="USD", text="USD")),
                 QuickReplyButton(action=MessageAction(label="JPY", text="JPY"))
             ]))
-
-# TextSendMessage(text=f"""""")
-
-INVALID_MESSEGE = TextSendMessage(text="很抱歉，我無法辨識您的指令！")
 
 
 def currency_rate_report(currency):
