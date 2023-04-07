@@ -21,11 +21,11 @@ handler = WebhookHandler(os.environ.get('CHANNEL_SECRET'))
 
 # https://a0bf-27-33-126-123.ngrok.io/callback
 
-def load_subscribers():
-    f = open("data/userId.txt", "r")
-    return set(f.readlines())
+# def load_subscribers():
+#     f = open("data/userId.txt", "r")
+#     return set(f.readlines())
 
-subscribers = load_subscribers()
+# subscribers = load_subscribers()
 
 INFO_MESSEGE = TextSendMessage(text=f"""目前支援的指令如下：
 1. \"info"：查看使用方式
