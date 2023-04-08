@@ -30,6 +30,15 @@ if channel_access_token is None or channel_secret is None:
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+currency_alias = [('美金','美元', '美', 'USD', 'US'), ('港幣', '港', 'HKD', 'HK'), ('英鎊', '英', 'GBP'),
+         ('澳幣', '澳州',  'AUD'), ('加拿大幣', '加拿大','CAD'), ('新加坡幣', '新加坡', 'SGD'), 
+         ('瑞士法郎', '瑞士', 'CHF'), ('日圓', '日幣', '日本', 'JPY'), 
+         ('南非幣', 'ZAR'), ('瑞典幣', 'SEK'), ('紐元', 'NZD'), 
+         ('泰幣', 'THB'), ('菲國比索', 'PHP'), ('印尼幣', 'IDR'), ('歐元', 'EUR'), 
+         ('韓元', 'KRW'), ('越南盾', 'VND'), ('馬來幣', 'MYR'), ('人民幣', 'CNY')]
+currency_dict = dict(zip(twder.currencies(), currency_alias))
+
+
 # https://cd92-27-33-126-123.ngrok-free.app
 
 # def load_subscribers():
@@ -121,21 +130,22 @@ def handle_message(event):
             event.reply_token,
             list_all_currencies())
     
-    elif message.upper() in rate.list_currencies():
-        content = ""
-        try:
-            content = currency_rate_report(message.upper())   
-            line_bot_api.reply_message(event.reply_token,
-                TextSendMessage(
-                    text=content
+    for code, alias in currency_dict:
+        if message.upper() in alias:
+            content = ""
+            try:
+                content = currency_rate_report(code)   
+                line_bot_api.reply_message(event.reply_token,
+                    TextSendMessage(
+                        text=content
+                    )
                 )
-            )
-        except ValueError:
-           line_bot_api.reply_message(event.reply_token,
-                TextSendMessage(
-                    text="很抱歉，目前查無此匯率"
-                )
-            ) 
+            except ValueError:
+                line_bot_api.reply_message(event.reply_token,
+                        TextSendMessage(
+                            text="很抱歉，目前查無此匯率"
+                        )
+                    ) 
 
     else:
         line_bot_api.reply_message(event.reply_token,

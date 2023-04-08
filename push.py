@@ -25,9 +25,9 @@ def push_daily_report():
 
 
 if __name__ == "__main__":
+    push_daily_report()
+    # schedule.every().day.at("09:00").do(push_daily_report)
 
-    schedule.every().day.at("09:00").do(push_daily_report)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
