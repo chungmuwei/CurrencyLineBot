@@ -14,12 +14,23 @@ import os, rate, twder
 
 app = Flask(__name__)
 
-# '0FmaYmoBD+O1kPOtna88s5uehDgVbGBNQaoFHA6L1nBOsunQMYg5vVjPltt57j+/uH305Uys6wcmXTxjAb2QBDQwF0/68WSwIWmUl9TfIT4jKIx+3LIIdn6TbBKAbMoaAlt2OkUkWjG2QuNDQuCBLQdB04t89/1O/w1cDnyilFU='
-# 'ce8c604a308615d0f101c2bbbbab1e5f'
-line_bot_api = LineBotApi(os.environ.get('CHANNEL_ACCESS_TOKEN'))
-handler = WebhookHandler(os.environ.get('CHANNEL_SECRET'))
+# Retrieve API tokens
 
-# https://a0bf-27-33-126-123.ngrok.io/callback
+# 1. If deployed on Heroku cloud: get keys from environment variables
+channel_access_token = os.environ.get('CHANNEL_ACCESS_TOKEN')
+channel_secret = os.environ.get('CHANNEL_SECRET')
+
+# 2. If tested on Local Machine: get keys from the file
+if channel_access_token is None or channel_secret is None:
+    keys = open("keys.txt", "r")
+    channel_access_token =  keys.readline().strip()
+    channel_secret = keys.readline().strip()
+    keys.close()
+
+line_bot_api = LineBotApi(channel_access_token)
+handler = WebhookHandler(channel_secret)
+
+# https://cd92-27-33-126-123.ngrok-free.app
 
 # def load_subscribers():
 #     f = open("data/userId.txt", "r")
@@ -68,30 +79,30 @@ def currency_rate_report(currency):
     
     return ret_str
 
-
-
-@app.route("/", methods=['GET', 'POST'])
-def callback():
-    if request.method == 'GET':
-        return "Hello Heroku"
+@app.route("/", methods=['GET'])
+def home():
+    return "This is the Webhook URL of my CurrencyReminder LINE Bot to process events sent by LINE platform!"
     
-    if request.method == 'POST':
-        # get X-Line-Signature header value
-        signature = request.headers['X-Line-Signature']
 
-        # get request body as text
-        body = request.get_data(as_text=True)
-        app.logger.info(body)
-        
+@app.route("/callback", methods=['POST'])
+def callback():
+    
+    # get X-Line-Signature header value
+    signature = request.headers['X-Line-Signature']
 
-        # handle webhook body
-        try:
-            handler.handle(body, signature)
-        except InvalidSignatureError:
-            print("Invalid signature. Please check your channel access token/channel secret.")
-            abort(400)
+    # get request body as text
+    body = request.get_data(as_text=True)
+    app.logger.info(body)
+    
 
-        return 'OK'
+    # handle webhook body
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        print("Invalid signature. Please check your channel access token/channel secret.")
+        abort(400)
+
+    return 'OK'
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -133,5 +144,7 @@ def handle_message(event):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    # On MacOS, you have to choose port other than default 5000
+    port = int(os.environ.get("PORT", 5002))
+    localhost = "127.0.0.1"
+    app.run(port=port, debug=True)
