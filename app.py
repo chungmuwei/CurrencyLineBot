@@ -10,7 +10,7 @@ from linebot.models import (
     QuickReply, QuickReplyButton, MessageAction
 )
 
-import os, rate, twder
+import os, traceback, rate, twder
 
 app = Flask(__name__)
 
@@ -116,41 +116,46 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    ### Add userId to json file
-    message = event.message.text.strip()
+    try:
+        ### Add userId to json file
+        message = event.message.text.strip()
 
-    if message.lower() == "info":
-        line_bot_api.reply_message(
-            event.reply_token,
-            INFO_MESSEGE)
+        if message.lower() == "info":
+            line_bot_api.reply_message(
+                event.reply_token,
+                INFO_MESSEGE)
 
-    elif message.lower() == "all":
+        elif message.lower() == "all":
 
-        line_bot_api.reply_message(
-            event.reply_token,
-            list_all_currencies())
-    
-    for code, alias in currency_dict.items():
-        if message.upper() in alias:
-            content = ""
-            try:
-                content = currency_rate_report(code)   
-                line_bot_api.reply_message(event.reply_token,
-                    TextSendMessage(
-                        text=content
-                    )
-                )
-            except ValueError:
-                line_bot_api.reply_message(event.reply_token,
+            line_bot_api.reply_message(
+                event.reply_token,
+                list_all_currencies())
+        
+        for code, alias in currency_dict.items():
+            if message.upper() in alias:
+                content = ""
+                try:
+                    content = currency_rate_report(code)   
+                    line_bot_api.reply_message(event.reply_token,
                         TextSendMessage(
-                            text="很抱歉，目前查無此匯率"
+                            text=content
                         )
-                    ) 
+                    )
+                except ValueError:
+                    line_bot_api.reply_message(event.reply_token,
+                            TextSendMessage(
+                                text="很抱歉，目前查無此匯率"
+                            )
+                        ) 
 
-    else:
-        line_bot_api.reply_message(event.reply_token,
-            [INVALID_MESSEGE, INFO_MESSEGE])
-            
+        else:
+            line_bot_api.reply_message(event.reply_token,
+                [INVALID_MESSEGE, INFO_MESSEGE])
+    except Exception as e:
+        line_bot_api.reply_message(event.reply_token, 
+           "很抱歉，程式運行時發生錯誤，因此無法正常運作！")
+        
+        traceback.print_exception()
 
 
 if __name__ == "__main__":
