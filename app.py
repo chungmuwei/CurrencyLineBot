@@ -130,7 +130,7 @@ def handle_message(event):
             event.reply_token,
             list_all_currencies())
     
-    for code, alias in currency_dict:
+    for code, alias in currency_dict.items():
         if message.upper() in alias:
             content = ""
             try:
