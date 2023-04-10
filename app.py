@@ -161,5 +161,4 @@ def handle_message(event):
 if __name__ == "__main__":
     # On MacOS, you have to choose port other than default 5000
     port = int(os.environ.get("PORT", 5002))
-    localhost = "127.0.0.1"
-    app.run(port=port, debug=True)
+    app.run(port=port)
