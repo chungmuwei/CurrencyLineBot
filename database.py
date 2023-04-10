@@ -12,14 +12,15 @@ def database_connect():
     conn = None
     try:
         # deploying on Fly.io
-        # database_url = os.environ.get("DATABASE_URL")
-        database_url = "postgres://postgres:t4HXujgCBU4Byor@localhost:5432"
+        database_url = os.environ.get("DATABASE_URL")
+        # testing locally
+        # database_url = "postgres://postgres:t4HXujgCBU4Byor@localhost:5432"
         conn = psycopg2.connect(database_url)  
     except psycopg2.OperationalError as e:
-        print("Connection Failed!\n")
+        print("database: database_connection: Database Connection Failed!\n")
         print(e)
     except psycopg2.ProgrammingError as e:
-        print("Incorrect username and password!\n")
+        print("database: database_connection: Incorrect username and password!\n")
         print(e)
     except Exception:
         print(e)
