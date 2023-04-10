@@ -69,15 +69,16 @@ def callback():
 
 @handler.add(FollowEvent)
 def handle_follow(event):
-    # add new user to the database
+    # Send welcome message
+    line_bot_api.reply_message(event.reply_token,
+        [welcome_message, HELP_MESSEGE, list_all_currencies])
+    
+    # add user to the database
     profile = line_bot_api.get_profile(event.source.user_id)
     success = database.add_user(profile)
 
     if not success:
         print(f"app: handle_follow: failed to add user with id '{profile.user_id}' to the database")
-    else:
-        line_bot_api.reply_message(event.reply_token,
-            [welcome_message, HELP_MESSEGE, list_all_currencies])
 
 
 
