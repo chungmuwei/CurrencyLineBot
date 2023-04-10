@@ -145,10 +145,6 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token,
                 [INVALID_MESSEGE, HELP_MESSEGE])
 
-    except Exception as e:
-        line_bot_api.reply_message(event.reply_token, 
-           "很抱歉，程式運行時發生錯誤，因此無法正常運作！")
-        traceback.print_exception()
 
     except LineBotApiError as e:
         print(e.status_code)
@@ -156,6 +152,10 @@ def handle_message(event):
         print(e.error.message)
         print(e.error.details)
     
+    except Exception as e:
+        line_bot_api.reply_message(event.reply_token, 
+           "很抱歉，程式運行時發生錯誤，因此無法正常運作！")
+        traceback.print_exception()
 
 """
 if __name__ == "__main__":
