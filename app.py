@@ -3,7 +3,7 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
-    InvalidSignatureError
+    InvalidSignatureError, LineBotApiError
 )
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, 
@@ -70,8 +70,14 @@ def callback():
 @handler.add(FollowEvent)
 def handle_follow(event):
     # Send welcome message
-    line_bot_api.reply_message(event.reply_token,
-        [welcome_message, HELP_MESSEGE, list_all_currencies])
+    try:
+        line_bot_api.reply_message(reply_token=event.reply_token,
+            messages=[welcome_message, HELP_MESSEGE, list_all_currencies])
+    except LineBotApiError as e:
+        print(e.status_code)
+        print(e.request_id)
+        print(e.error.message)
+        print(e.error.details)
     
     # add user to the database
     profile = line_bot_api.get_profile(event.source.user_id)
@@ -101,6 +107,12 @@ def handle_message(event):
             except ValueError:
                 line_bot_api.reply_message(event.reply_token,
                         TextSendMessage(text="很抱歉，目前查無此匯率"))
+            except LineBotApiError as e:
+                print(e.status_code)
+                print(e.request_id)
+                print(e.error.message)
+                print(e.error.details)
+    
                 
     try:
         ### Add userId to json file
@@ -136,12 +148,18 @@ def handle_message(event):
     except Exception as e:
         line_bot_api.reply_message(event.reply_token, 
            "很抱歉，程式運行時發生錯誤，因此無法正常運作！")
-        
         traceback.print_exception()
 
+    except LineBotApiError as e:
+        print(e.status_code)
+        print(e.request_id)
+        print(e.error.message)
+        print(e.error.details)
+    
 
+"""
 if __name__ == "__main__":
     # On MacOS, you have to choose port other than default 5000
     # port = int(os.environ.get("PORT", 5002))
-    # app.run(port=port)
-    pass
+    app.run(port=port)
+"""
