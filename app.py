@@ -72,7 +72,7 @@ def handle_follow(event):
     # Send welcome message
     try:
         line_bot_api.reply_message(reply_token=event.reply_token,
-            messages=[welcome_message(), HELP_MESSEGE, list_all_currencies()])
+            messages=[welcome_message(event.source.user_id), HELP_MESSEGE, list_all_currencies()])
     except LineBotApiError as e:
         print(e.status_code)
         print(e.request_id)
