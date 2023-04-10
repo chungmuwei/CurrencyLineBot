@@ -1,12 +1,4 @@
 import psycopg2, os
-"""
-Username:    postgres
-Password:    t4HXujgCBU4Byor
-Hostname:    currency-line-bot.internal
-Flycast:     fdaa:1:de90:0:1::2
-Proxy port:  5432
-Postgres port:  5433
-"""
 
 def database_connect():
     conn = None
@@ -14,7 +6,7 @@ def database_connect():
         # deploying on Fly.io
         database_url = os.environ.get("DATABASE_URL")
         # testing locally
-        # database_url = "postgres://postgres:t4HXujgCBU4Byor@localhost:5432"
+
         conn = psycopg2.connect(database_url)  
     except psycopg2.OperationalError as e:
         print("database: database_connection: Database Connection Failed!\n")
