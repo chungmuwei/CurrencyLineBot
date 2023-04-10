@@ -3,3 +3,4 @@
 !.gitignore
 !requirements.txt
 !Procfile
+!.github
